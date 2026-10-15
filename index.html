@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Livro Caixa</title>
+<style>
+  :root{
+    --bg:#E4EAF3;--panel:#fff;--border:#E6E8EE;--text:#171B23;--text-soft:#6B7280;
+    --navy:#161B2E;--income:#0F9D62;--debit:#E5484D;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12161C;--panel:#1A2028;--border:#2A323C;--text:#E7EAEE;--text-soft:#9099A6;
+      --navy:#3E6BE0;--income:#34D399;--debit:#F87171;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,Inter,system-ui,sans-serif;
+    padding:20px 16px calc(24px + env(safe-area-inset-bottom,0px));
+    padding-top:calc(20px + env(safe-area-inset-top,0px));
+    max-width:480px;margin:0 auto;
+  }
+  h1{font-size:20px;margin:0 0 2px;}
+  .sub{font-size:13px;color:var(--text-soft);margin-bottom:18px;}
+  form{
+    background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:16px;display:flex;flex-direction:column;gap:10px;
+    box-shadow:0 1px 6px rgba(16,24,40,.08);
+  }
+  input{
+    font-size:15px;padding:11px 12px;border:1px solid var(--border);border-radius:8px;
+    background:var(--panel);color:var(--text);
+  }
+  input:focus{outline:none;border-color:var(--navy);}
+  button{
+    font-size:15px;font-weight:600;padding:13px;border:none;border-radius:8px;
+    background:var(--navy);color:#fff;cursor:pointer;
+  }
+  button:disabled{opacity:.6;}
+  .status{font-size:12px;text-align:center;color:var(--text-soft);min-height:16px;}
+  .totals{display:flex;gap:10px;margin:18px 0 10px;}
+  .totals .box{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+  .totals .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-soft);margin-bottom:3px;}
+  .totals .val{font-size:15px;font-weight:700;}
+  .totals .in .val{color:var(--income);}
+  .totals .out .val{color:var(--debit);}
+  .totals .net .val{color:var(--text);}
+  .type-toggle{display:flex;gap:8px;}
+  .type-toggle button{
+    flex:1;background:var(--bg);color:var(--text-soft);
+    border:1.5px solid var(--border);font-size:14px;padding:10px;
+  }
+  .type-toggle button.active.in{background:var(--income);border-color:var(--income);color:#fff;}
+  .type-toggle button.active.out{background:var(--debit);border-color:var(--debit);color:#fff;}
+  select{
+    font-size:14px;padding:11px 12px;border:1px solid var(--border);border-radius:8px;
+    background:var(--panel);color:var(--text);
+  }
+  .entry{
+    background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    padding:11px 14px;margin-bottom:8px;
+    border-left:4px solid var(--border);
+  }
+  .entry.in{border-left-color:var(--income);}
+  .entry.out{border-left-color:var(--debit);}
+  .entry .v{font-weight:700;font-size:15px;}
+  .entry.in .v{color:var(--income);}
+  .entry.out .v{color:var(--debit);}
+  .entry .d{font-size:13px;margin-top:2px;}
+  .entry .m{font-size:12px;color:var(--text-soft);margin-top:2px;}
+  .empty{color:var(--text-soft);font-size:13px;text-align:center;padding:24px 0;}
+  .actions{display:flex;gap:14px;margin-top:8px;}
+  .actions button{
+    background:none;border:none;padding:2px 0;font-size:12px;font-weight:600;
+    color:var(--text-soft);cursor:pointer;
+  }
+  .actions button.del{color:var(--debit);}
+  .edit-box{display:flex;flex-direction:column;gap:8px;}
+  .edit-box .row2{display:flex;gap:8px;}
+  .edit-box .row2 > *{flex:1;min-width:0;}
+  .edit-box .save{background:var(--navy);color:#fff;padding:10px;font-size:13px;border-radius:8px;border:none;font-weight:600;cursor:pointer;}
+  .edit-box .cancel{background:none;border:1px solid var(--border);color:var(--text-soft);padding:10px;font-size:13px;border-radius:8px;font-weight:600;cursor:pointer;}
+</style>
+</head>
+<body>
+  <h1>📒 Livro Caixa</h1>
+  <div class="sub">Canal com Matheus — lance aqui o que entrou e o que foi pago</div>
+
+  <form id="form">
+    <div class="type-toggle">
+      <button type="button" id="btnIn" class="active in">Recebi</button>
+      <button type="button" id="btnOut" class="out">Paguei</button>
+    </div>
+    <input type="number" id="valor" placeholder="Valor (R$)" step="0.01" min="0" required inputmode="decimal">
+    <input type="text" id="obs" placeholder="O que foi (ex.: cliente, aluguel, DAS)..." required>
+    <select id="due" style="display:none;">
+      <option value="">Vencimento (opcional)</option>
+      <option value="Dia 05">Dia 05</option>
+      <option value="Dia 20">Dia 20</option>
+      <option value="Dia 30">Dia 30</option>
+      <option value="Outro">Outro</option>
+    </select>
+    <button type="submit" id="submitBtn">Registrar</button>
+    <div class="status" id="status"></div>
+  </form>
+
+  <div class="totals">
+    <div class="box in"><div class="lbl">Recebido</div><div class="val" id="totalIn">R$ 0,00</div></div>
+    <div class="box out"><div class="lbl">Pago</div><div class="val" id="totalOut">R$ 0,00</div></div>
+    <div class="box net"><div class="lbl">Saldo</div><div class="val" id="totalNet">R$ 0,00</div></div>
+  </div>
+  <div id="list"></div>
+
+<!-- Firebase (SDK via CDN, versao compat para uso simples) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+// ===========================================================================
+// CONFIGURACAO DO FIREBASE
+// Cole aqui os dados do SEU projeto Firebase (passo a passo no README.md).
+// Substitua os valores entre aspas pelos do seu projeto.
+// ===========================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyAGHOVGDlDeAaMVZeJuRu5g_LNaWRGbLAA",
+  authDomain: "livro-caixa-7cb70.firebaseapp.com",
+  projectId: "livro-caixa-7cb70",
+  storageBucket: "livro-caixa-7cb70.firebasestorage.app",
+  messagingSenderId: "203733141804",
+  appId: "1:203733141804:web:7893d28152c569935b0489"
+};
+// ===========================================================================
+
+function fmt(v){ return (Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+let entries = [];
+let tipo = 'in';
+let db = null;
+let editingId = null;
+let confirmingId = null;
+
+function setTipo(t){
+  tipo = t;
+  document.getElementById('btnIn').classList.toggle('active', t === 'in');
+  document.getElementById('btnOut').classList.toggle('active', t === 'out');
+  document.getElementById('due').style.display = t === 'out' ? 'block' : 'none';
+  document.getElementById('valor').placeholder = t === 'in' ? 'Valor recebido (R$)' : 'Valor pago (R$)';
+  document.getElementById('obs').placeholder = t === 'in' ? 'O que foi (ex.: cliente, serviço)...' : 'O que foi pago (ex.: DAS, aluguel)...';
+}
+document.getElementById('btnIn').addEventListener('click', () => setTipo('in'));
+document.getElementById('btnOut').addEventListener('click', () => setTipo('out'));
+
+function render(){
+  let totalIn = 0, totalOut = 0;
+  entries.forEach(e => {
+    if(e.tipo === 'out') totalOut += Number(e.valor) || 0;
+    else totalIn += Number(e.valor) || 0;
+  });
+  document.getElementById('totalIn').textContent = fmt(totalIn);
+  document.getElementById('totalOut').textContent = fmt(totalOut);
+  document.getElementById('totalNet').textContent = fmt(totalIn - totalOut);
+
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  if(!entries.length){
+    const p = document.createElement('div');
+    p.className = 'empty';
+    p.textContent = 'Nenhum lançamento ainda.';
+    list.appendChild(p);
+    return;
+  }
+  entries.forEach(e => {
+    const isOut = e.tipo === 'out';
+    const row = document.createElement('div');
+    row.className = 'entry ' + (isOut ? 'out' : 'in');
+
+    if(editingId === e.id){
+      const box = document.createElement('div');
+      box.className = 'edit-box';
+      const sel = document.createElement('select');
+      [['in','Recebi'],['out','Paguei']].forEach(([v,l]) => {
+        const o = document.createElement('option'); o.value = v; o.textContent = l;
+        if((e.tipo || 'in') === v) o.selected = true;
+        sel.appendChild(o);
+      });
+      const val = document.createElement('input');
+      val.type = 'number'; val.step = '0.01'; val.min = '0'; val.value = e.valor;
+      val.setAttribute('inputmode','decimal');
+      const desc = document.createElement('input');
+      desc.type = 'text'; desc.value = e.obs || '';
+      const due = document.createElement('select');
+      ['', 'Dia 05', 'Dia 20', 'Dia 30', 'Outro'].forEach(v => {
+        const o = document.createElement('option'); o.value = v;
+        o.textContent = v || 'Sem vencimento';
+        if((e.due || '') === v) o.selected = true;
+        due.appendChild(o);
+      });
+      const r2 = document.createElement('div');
+      r2.className = 'row2';
+      r2.appendChild(sel); r2.appendChild(val);
+      const r3 = document.createElement('div');
+      r3.className = 'row2';
+      const save = document.createElement('button');
+      save.type = 'button'; save.className = 'save'; save.textContent = 'Salvar';
+      save.addEventListener('click', async () => {
+        const nv = parseFloat(val.value);
+        const nd = desc.value.trim();
+        if(isNaN(nv) || nv <= 0){ val.focus(); return; }
+        if(!nd){ desc.focus(); return; }
+        save.disabled = true;
+        try{
+          await db.collection('payments').doc(e.id).update({
+            tipo: sel.value, valor: nv, obs: nd,
+            due: sel.value === 'out' ? due.value : ''
+          });
+          editingId = null;
+          render();
+        }catch(err){
+          document.getElementById('status').textContent = 'Não deu pra salvar: ' + err.message;
+          save.disabled = false;
+        }
+      });
+      const cancel = document.createElement('button');
+      cancel.type = 'button'; cancel.className = 'cancel'; cancel.textContent = 'Cancelar';
+      cancel.addEventListener('click', () => { editingId = null; render(); });
+      r3.appendChild(save); r3.appendChild(cancel);
+      box.appendChild(r2); box.appendChild(desc); box.appendChild(due); box.appendChild(r3);
+      row.appendChild(box);
+      list.appendChild(row);
+      return;
+    }
+
+    const v = document.createElement('div');
+    v.className = 'v';
+    v.textContent = (isOut ? '- ' : '+ ') + fmt(e.valor);
+    const d = document.createElement('div');
+    d.className = 'd';
+    d.textContent = e.obs || '(sem descrição)';
+    const m = document.createElement('div');
+    m.className = 'm';
+    m.textContent = fmtDate(e.date) + (e.due ? ' · Venc. ' + e.due : '');
+    const acts = document.createElement('div');
+    acts.className = 'actions';
+    const be = document.createElement('button');
+    be.type = 'button'; be.textContent = 'Editar';
+    be.addEventListener('click', () => { editingId = e.id; render(); });
+    if(confirmingId === e.id){
+      const q = document.createElement('span');
+      q.textContent = 'Excluir mesmo?';
+      q.style.cssText = 'font-size:12px;color:var(--text-soft);';
+      const yes = document.createElement('button');
+      yes.type = 'button'; yes.className = 'del'; yes.textContent = 'Sim, excluir';
+      yes.addEventListener('click', async () => {
+        yes.disabled = true;
+        try{ await db.collection('payments').doc(e.id).delete(); confirmingId = null; }
+        catch(err){ yes.disabled = false; q.textContent = 'Erro ao excluir: ' + err.message; }
+      });
+      const no = document.createElement('button');
+      no.type = 'button'; no.textContent = 'Não';
+      no.addEventListener('click', () => { confirmingId = null; render(); });
+      acts.appendChild(q); acts.appendChild(yes); acts.appendChild(no);
+    } else {
+      const bd = document.createElement('button');
+      bd.type = 'button'; bd.className = 'del'; bd.textContent = 'Excluir';
+      bd.addEventListener('click', () => { confirmingId = e.id; render(); });
+      acts.appendChild(be); acts.appendChild(bd);
+    }
+    row.appendChild(v); row.appendChild(d); row.appendChild(m); row.appendChild(acts);
+    list.appendChild(row);
+  });
+}
+render();
+
+(async function(){
+  const statusEl = document.getElementById('status');
+
+  // Verifica se a configuracao foi preenchida
+  if(firebaseConfig.apiKey === "COLE_AQUI"){
+    statusEl.textContent = 'Falta configurar o Firebase (veja o README.md).';
+    return;
+  }
+
+  try{
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+  }catch(e){
+    statusEl.textContent = 'Erro ao iniciar o Firebase: ' + e.message;
+    return;
+  }
+
+  db.collection('payments').orderBy('date','desc').limit(200).onSnapshot(
+    snap => {
+      entries = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
+      render();
+    },
+    err => { statusEl.textContent = 'Erro ao carregar: ' + err.message; }
+  );
+
+  document.getElementById('form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const valorEl = document.getElementById('valor');
+    const obsEl = document.getElementById('obs');
+    const dueEl = document.getElementById('due');
+    const valor = parseFloat(valorEl.value);
+    if(isNaN(valor) || valor <= 0){ valorEl.focus(); return; }
+    const obs = obsEl.value.trim();
+    if(!obs){ obsEl.focus(); return; }
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Registrando...';
+    try{
+      await db.collection('payments').add({
+        tipo: tipo,
+        valor: valor,
+        obs: obs,
+        due: tipo === 'out' ? dueEl.value : '',
+        date: new Date().toISOString()
+      });
+      valorEl.value = ''; obsEl.value = ''; dueEl.value = '';
+      statusEl.textContent = 'Registrado ✓';
+      setTimeout(() => { statusEl.textContent = ''; }, 2500);
+    }catch(e){
+      statusEl.textContent = 'Não deu pra salvar: ' + e.message;
+    }
+    btn.disabled = false;
+    btn.textContent = 'Registrar';
+  });
+})();
+</script>
+</body>
+</html>
