@@ -10,93 +10,117 @@
     --navy:#161B2E;--income:#0F9D62;--debit:#E5484D;
   }
   @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
+    :root{
       --bg:#12161C;--panel:#1A2028;--border:#2A323C;--text:#E7EAEE;--text-soft:#9099A6;
       --navy:#3E6BE0;--income:#34D399;--debit:#F87171;
     }
   }
   *{box-sizing:border-box;}
-  html,body{height:100%;}
   body{
-    margin:0;background:var(--bg);color:var(--text);
+    margin:0 auto;background:var(--bg);color:var(--text);
     font-family:-apple-system,Inter,system-ui,sans-serif;
-    padding:20px 16px calc(24px + env(safe-area-inset-bottom,0px));
-    padding-top:calc(20px + env(safe-area-inset-top,0px));
-    max-width:480px;margin:0 auto;
+    padding:20px 16px 40px;max-width:480px;
   }
   h1{font-size:20px;margin:0 0 2px;}
-  .sub{font-size:13px;color:var(--text-soft);margin-bottom:18px;}
+  .sub{font-size:13px;color:var(--text-soft);margin-bottom:14px;}
+  .month-nav{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--panel);border:1px solid var(--border);border-radius:999px;
+    padding:4px;margin-bottom:14px;
+  }
+  .month-nav button{
+    width:36px;height:36px;border-radius:50%;border:none;background:none;
+    color:var(--text);font-size:20px;cursor:pointer;padding:0;
+  }
+  .month-nav button:hover{background:var(--bg);}
+  #monthLabel{font-weight:700;font-size:14px;text-transform:capitalize;}
   form{
     background:var(--panel);border:1px solid var(--border);border-radius:14px;
     padding:16px;display:flex;flex-direction:column;gap:10px;
     box-shadow:0 1px 6px rgba(16,24,40,.08);
   }
-  input{
+  input,select{
     font-size:15px;padding:11px 12px;border:1px solid var(--border);border-radius:8px;
-    background:var(--panel);color:var(--text);
+    background:var(--panel);color:var(--text);width:100%;
   }
-  input:focus{outline:none;border-color:var(--navy);}
-  button{
+  input:focus,select:focus{outline:none;border-color:var(--navy);}
+  button.primary{
     font-size:15px;font-weight:600;padding:13px;border:none;border-radius:8px;
     background:var(--navy);color:#fff;cursor:pointer;
   }
   button:disabled{opacity:.6;}
   .status{font-size:12px;text-align:center;color:var(--text-soft);min-height:16px;}
+  .status.err{color:var(--debit);}
+  .type-toggle{display:flex;gap:8px;}
+  .type-toggle button{
+    flex:1;background:var(--bg);color:var(--text-soft);
+    border:1.5px solid var(--border);font-size:14px;padding:10px;
+    border-radius:8px;font-weight:600;cursor:pointer;
+  }
+  .type-toggle button.active.in{background:var(--income);border-color:var(--income);color:#fff;}
+  .type-toggle button.active.out{background:var(--debit);border-color:var(--debit);color:#fff;}
   .totals{display:flex;gap:10px;margin:18px 0 10px;}
   .totals .box{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
   .totals .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-soft);margin-bottom:3px;}
   .totals .val{font-size:15px;font-weight:700;}
   .totals .in .val{color:var(--income);}
   .totals .out .val{color:var(--debit);}
-  .totals .net .val{color:var(--text);}
-  .type-toggle{display:flex;gap:8px;}
-  .type-toggle button{
-    flex:1;background:var(--bg);color:var(--text-soft);
-    border:1.5px solid var(--border);font-size:14px;padding:10px;
-  }
-  .type-toggle button.active.in{background:var(--income);border-color:var(--income);color:#fff;}
-  .type-toggle button.active.out{background:var(--debit);border-color:var(--debit);color:#fff;}
-  select{
-    font-size:14px;padding:11px 12px;border:1px solid var(--border);border-radius:8px;
-    background:var(--panel);color:var(--text);
-  }
+  .sec-head{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+  .sec-head.in{color:var(--income);}
+  .sec-head.out{color:var(--debit);}
+  .sec-head span:last-child{font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-soft);}
   .entry{
     background:var(--panel);border:1px solid var(--border);border-radius:10px;
-    padding:11px 14px;margin-bottom:8px;
-    border-left:4px solid var(--border);
+    padding:11px 14px;margin-bottom:8px;border-left:4px solid var(--border);
   }
   .entry.in{border-left-color:var(--income);}
   .entry.out{border-left-color:var(--debit);}
+  .entry.done{opacity:.8;}
   .entry .v{font-weight:700;font-size:15px;}
   .entry.in .v{color:var(--income);}
   .entry.out .v{color:var(--debit);}
   .entry .d{font-size:13px;margin-top:2px;}
   .entry .m{font-size:12px;color:var(--text-soft);margin-top:2px;}
-  .empty{color:var(--text-soft);font-size:13px;text-align:center;padding:24px 0;}
-  .actions{display:flex;gap:14px;margin-top:8px;}
-  .actions button{
-    background:none;border:none;padding:2px 0;font-size:12px;font-weight:600;
-    color:var(--text-soft);cursor:pointer;
-  }
+  .empty{color:var(--text-soft);font-size:13px;text-align:center;padding:20px 0;}
+  .chk{display:block;width:100%;margin-top:8px;padding:8px 10px;border:1.5px dashed var(--border);background:none;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--text-soft);cursor:pointer;text-align:left;}
+  .chk.on{border-style:solid;border-color:var(--income);color:var(--income);}
+  .actions{display:flex;gap:14px;margin-top:8px;align-items:center;}
+  .actions button{background:none;border:none;padding:2px 0;font-size:12px;font-weight:600;color:var(--text-soft);cursor:pointer;}
   .actions button.del{color:var(--debit);}
   .edit-box{display:flex;flex-direction:column;gap:8px;}
   .edit-box .row2{display:flex;gap:8px;}
   .edit-box .row2 > *{flex:1;min-width:0;}
   .edit-box .save{background:var(--navy);color:#fff;padding:10px;font-size:13px;border-radius:8px;border:none;font-weight:600;cursor:pointer;}
   .edit-box .cancel{background:none;border:1px solid var(--border);color:var(--text-soft);padding:10px;font-size:13px;border-radius:8px;font-weight:600;cursor:pointer;}
+  .hist-title{margin:30px 2px 8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-soft);}
+  .hist-item{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    padding:10px 14px;margin-bottom:8px;cursor:pointer;
+  }
+  .hist-item.current{border-color:var(--navy);box-shadow:0 0 0 1px var(--navy);}
+  .hist-item .hm{font-weight:700;font-size:13.5px;text-transform:capitalize;}
+  .hist-item .hv{font-size:11.5px;color:var(--text-soft);text-align:right;line-height:1.5;}
+  .hist-item .hv b{font-size:13px;color:var(--text);}
 </style>
 </head>
 <body>
   <h1>📒 Livro Caixa</h1>
   <div class="sub">Canal com Matheus — lance aqui o que entrou e o que foi pago</div>
 
+  <div class="month-nav">
+    <button type="button" id="prevM" aria-label="Mês anterior">‹</button>
+    <div id="monthLabel"></div>
+    <button type="button" id="nextM" aria-label="Próximo mês">›</button>
+  </div>
+
   <form id="form">
     <div class="type-toggle">
       <button type="button" id="btnIn" class="active in">Recebi</button>
       <button type="button" id="btnOut" class="out">Paguei</button>
     </div>
-    <input type="number" id="valor" placeholder="Valor (R$)" step="0.01" min="0" required inputmode="decimal">
-    <input type="text" id="obs" placeholder="O que foi (ex.: cliente, aluguel, DAS)..." required>
+    <input type="number" id="valor" placeholder="Valor recebido (R$)" step="0.01" min="0" required inputmode="decimal">
+    <input type="text" id="obs" placeholder="O que foi (ex.: cliente, serviço)..." required>
     <select id="due" style="display:none;">
       <option value="">Vencimento (opcional)</option>
       <option value="Dia 05">Dia 05</option>
@@ -104,236 +128,308 @@
       <option value="Dia 30">Dia 30</option>
       <option value="Outro">Outro</option>
     </select>
-    <button type="submit" id="submitBtn">Registrar</button>
+    <button type="submit" id="submitBtn" class="primary">Registrar</button>
     <div class="status" id="status"></div>
   </form>
 
   <div class="totals">
     <div class="box in"><div class="lbl">Recebido</div><div class="val" id="totalIn">R$ 0,00</div></div>
     <div class="box out"><div class="lbl">Pago</div><div class="val" id="totalOut">R$ 0,00</div></div>
-    <div class="box net"><div class="lbl">Saldo</div><div class="val" id="totalNet">R$ 0,00</div></div>
+    <div class="box"><div class="lbl">Saldo</div><div class="val" id="totalNet">R$ 0,00</div></div>
   </div>
-  <div id="list"></div>
 
-<!-- Firebase (SDK via CDN, versao compat para uso simples) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <div class="sec-head in" id="secIn"><span>Recebidos</span><span id="cntIn"></span></div>
+  <div id="listIn"></div>
+  <div class="sec-head out" id="secOut"><span>Pagos</span><span id="cntOut"></span></div>
+  <div id="listOut"></div>
 
-<script>
-// ===========================================================================
-// CONFIGURACAO DO FIREBASE
-// Cole aqui os dados do SEU projeto Firebase (passo a passo no README.md).
-// Substitua os valores entre aspas pelos do seu projeto.
-// ===========================================================================
+  <div class="hist-title">Histórico dos meses</div>
+  <div id="history"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ============================================================
+   Configuração do Firebase (projeto livro-caixa)
+   ============================================================ */
 const firebaseConfig = {
-  apiKey: "AIzaSyAGHOVGDlDeAaMVZeJuRu5g_LNaWRGbLAA",
-  authDomain: "livro-caixa-7cb70.firebaseapp.com",
-  projectId: "livro-caixa-7cb70",
-  storageBucket: "livro-caixa-7cb70.firebasestorage.app",
-  messagingSenderId: "203733141804",
-  appId: "1:203733141804:web:7893d28152c569935b0489"
+  apiKey: "AIzaSyB8ST87hOpt8Qr8OuPmKfwZV5rGGE2LL0I",
+  authDomain: "livro-caixa-3d6e0.firebaseapp.com",
+  projectId: "livro-caixa-3d6e0",
+  storageBucket: "livro-caixa-3d6e0.firebasestorage.app",
+  messagingSenderId: "1047259853298",
+  appId: "1:1047259853298:web:3b7403b219e78dcb947b6b"
 };
-// ===========================================================================
 
-function fmt(v){ return (Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
-function fmtDate(iso){
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const fmt = v => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const fmtDate = iso => {
   const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-}
+  return d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+};
+const keyOfDate = d => d.getFullYear() + '-' + pad(d.getMonth() + 1);
+const monthLabel = key => {
+  const [y, m] = key.split('-').map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+};
+const shiftMonth = (key, delta) => {
+  const [y, m] = key.split('-').map(Number);
+  return keyOfDate(new Date(y, m - 1 + delta, 1));
+};
+const entryMonth = e => e.mes || keyOfDate(new Date(e.date));
 
 let entries = [];
 let tipo = 'in';
-let db = null;
 let editingId = null;
 let confirmingId = null;
+const todayKey = keyOfDate(new Date());
+let month = todayKey;
+let db = null;
+
+function setStatus(msg, isErr){
+  const s = $('status');
+  s.textContent = msg || '';
+  s.className = 'status' + (isErr ? ' err' : '');
+}
 
 function setTipo(t){
   tipo = t;
-  document.getElementById('btnIn').classList.toggle('active', t === 'in');
-  document.getElementById('btnOut').classList.toggle('active', t === 'out');
-  document.getElementById('due').style.display = t === 'out' ? 'block' : 'none';
-  document.getElementById('valor').placeholder = t === 'in' ? 'Valor recebido (R$)' : 'Valor pago (R$)';
-  document.getElementById('obs').placeholder = t === 'in' ? 'O que foi (ex.: cliente, serviço)...' : 'O que foi pago (ex.: DAS, aluguel)...';
+  $('btnIn').classList.toggle('active', t === 'in');
+  $('btnOut').classList.toggle('active', t === 'out');
+  $('due').style.display = t === 'out' ? 'block' : 'none';
+  $('valor').placeholder = t === 'in' ? 'Valor recebido (R$)' : 'Valor pago (R$)';
+  $('obs').placeholder = t === 'in' ? 'O que foi (ex.: cliente, serviço)...' : 'O que foi pago (ex.: DAS, aluguel)...';
+  const showIn = t === 'in';
+  $('secIn').style.display = showIn ? '' : 'none';
+  $('listIn').style.display = showIn ? '' : 'none';
+  $('secOut').style.display = showIn ? 'none' : '';
+  $('listOut').style.display = showIn ? 'none' : '';
 }
-document.getElementById('btnIn').addEventListener('click', () => setTipo('in'));
-document.getElementById('btnOut').addEventListener('click', () => setTipo('out'));
+$('btnIn').addEventListener('click', () => setTipo('in'));
+$('btnOut').addEventListener('click', () => setTipo('out'));
+$('prevM').addEventListener('click', () => { month = shiftMonth(month, -1); editingId = null; confirmingId = null; render(); });
+$('nextM').addEventListener('click', () => { month = shiftMonth(month, 1); editingId = null; confirmingId = null; render(); });
 
-function render(){
-  let totalIn = 0, totalOut = 0;
-  entries.forEach(e => {
-    if(e.tipo === 'out') totalOut += Number(e.valor) || 0;
-    else totalIn += Number(e.valor) || 0;
+function buildEditBox(e, row){
+  const box = document.createElement('div');
+  box.className = 'edit-box';
+  const sel = document.createElement('select');
+  [['in', 'Recebi'], ['out', 'Paguei']].forEach(([v, l]) => {
+    const o = document.createElement('option'); o.value = v; o.textContent = l;
+    if((e.tipo || 'in') === v) o.selected = true;
+    sel.appendChild(o);
   });
-  document.getElementById('totalIn').textContent = fmt(totalIn);
-  document.getElementById('totalOut').textContent = fmt(totalOut);
-  document.getElementById('totalNet').textContent = fmt(totalIn - totalOut);
-
-  const list = document.getElementById('list');
-  list.innerHTML = '';
-  if(!entries.length){
-    const p = document.createElement('div');
-    p.className = 'empty';
-    p.textContent = 'Nenhum lançamento ainda.';
-    list.appendChild(p);
-    return;
-  }
-  entries.forEach(e => {
-    const isOut = e.tipo === 'out';
-    const row = document.createElement('div');
-    row.className = 'entry ' + (isOut ? 'out' : 'in');
-
-    if(editingId === e.id){
-      const box = document.createElement('div');
-      box.className = 'edit-box';
-      const sel = document.createElement('select');
-      [['in','Recebi'],['out','Paguei']].forEach(([v,l]) => {
-        const o = document.createElement('option'); o.value = v; o.textContent = l;
-        if((e.tipo || 'in') === v) o.selected = true;
-        sel.appendChild(o);
+  const val = document.createElement('input');
+  val.type = 'number'; val.step = '0.01'; val.min = '0'; val.value = e.valor;
+  val.setAttribute('inputmode', 'decimal');
+  const desc = document.createElement('input');
+  desc.type = 'text'; desc.value = e.obs || '';
+  const due = document.createElement('select');
+  ['', 'Dia 05', 'Dia 20', 'Dia 30', 'Outro'].forEach(v => {
+    const o = document.createElement('option'); o.value = v;
+    o.textContent = v || 'Sem vencimento';
+    if((e.due || '') === v) o.selected = true;
+    due.appendChild(o);
+  });
+  const r2 = document.createElement('div'); r2.className = 'row2';
+  r2.appendChild(sel); r2.appendChild(val);
+  const r3 = document.createElement('div'); r3.className = 'row2';
+  const save = document.createElement('button');
+  save.type = 'button'; save.className = 'save'; save.textContent = 'Salvar';
+  save.addEventListener('click', async () => {
+    const nv = parseFloat(val.value);
+    const nd = desc.value.trim();
+    if(isNaN(nv) || nv <= 0){ val.focus(); return; }
+    if(!nd){ desc.focus(); return; }
+    save.disabled = true;
+    try{
+      await updateDoc(doc(db, 'pagamentos', e.id), {
+        tipo: sel.value, valor: nv, obs: nd,
+        due: sel.value === 'out' ? due.value : '',
+        validado: false
       });
-      const val = document.createElement('input');
-      val.type = 'number'; val.step = '0.01'; val.min = '0'; val.value = e.valor;
-      val.setAttribute('inputmode','decimal');
-      const desc = document.createElement('input');
-      desc.type = 'text'; desc.value = e.obs || '';
-      const due = document.createElement('select');
-      ['', 'Dia 05', 'Dia 20', 'Dia 30', 'Outro'].forEach(v => {
-        const o = document.createElement('option'); o.value = v;
-        o.textContent = v || 'Sem vencimento';
-        if((e.due || '') === v) o.selected = true;
-        due.appendChild(o);
-      });
-      const r2 = document.createElement('div');
-      r2.className = 'row2';
-      r2.appendChild(sel); r2.appendChild(val);
-      const r3 = document.createElement('div');
-      r3.className = 'row2';
-      const save = document.createElement('button');
-      save.type = 'button'; save.className = 'save'; save.textContent = 'Salvar';
-      save.addEventListener('click', async () => {
-        const nv = parseFloat(val.value);
-        const nd = desc.value.trim();
-        if(isNaN(nv) || nv <= 0){ val.focus(); return; }
-        if(!nd){ desc.focus(); return; }
-        save.disabled = true;
-        try{
-          await db.collection('payments').doc(e.id).update({
-            tipo: sel.value, valor: nv, obs: nd,
-            due: sel.value === 'out' ? due.value : ''
-          });
-          editingId = null;
-          render();
-        }catch(err){
-          document.getElementById('status').textContent = 'Não deu pra salvar: ' + err.message;
-          save.disabled = false;
-        }
-      });
-      const cancel = document.createElement('button');
-      cancel.type = 'button'; cancel.className = 'cancel'; cancel.textContent = 'Cancelar';
-      cancel.addEventListener('click', () => { editingId = null; render(); });
-      r3.appendChild(save); r3.appendChild(cancel);
-      box.appendChild(r2); box.appendChild(desc); box.appendChild(due); box.appendChild(r3);
-      row.appendChild(box);
-      list.appendChild(row);
-      return;
+      editingId = null;
+      render();
+    }catch(err){
+      setStatus('Não deu pra salvar: ' + err.message, true);
+      save.disabled = false;
     }
+  });
+  const cancel = document.createElement('button');
+  cancel.type = 'button'; cancel.className = 'cancel'; cancel.textContent = 'Cancelar';
+  cancel.addEventListener('click', () => { editingId = null; render(); });
+  r3.appendChild(save); r3.appendChild(cancel);
+  box.appendChild(r2); box.appendChild(desc); box.appendChild(due); box.appendChild(r3);
+  row.appendChild(box);
+}
 
-    const v = document.createElement('div');
-    v.className = 'v';
-    v.textContent = (isOut ? '- ' : '+ ') + fmt(e.valor);
-    const d = document.createElement('div');
-    d.className = 'd';
-    d.textContent = e.obs || '(sem descrição)';
-    const m = document.createElement('div');
-    m.className = 'm';
-    m.textContent = fmtDate(e.date) + (e.due ? ' · Venc. ' + e.due : '');
-    const acts = document.createElement('div');
-    acts.className = 'actions';
+function buildEntry(e){
+  const isOut = e.tipo === 'out';
+  const row = document.createElement('div');
+  row.className = 'entry ' + (isOut ? 'out' : 'in') + (e.validado ? ' done' : '');
+
+  if(editingId === e.id){ buildEditBox(e, row); return row; }
+
+  const v = document.createElement('div');
+  v.className = 'v';
+  v.textContent = (isOut ? '- ' : '+ ') + fmt(e.valor);
+  const d = document.createElement('div');
+  d.className = 'd';
+  d.textContent = e.obs || '(sem descrição)';
+  const m = document.createElement('div');
+  m.className = 'm';
+  m.textContent = fmtDate(e.date) + (e.due ? ' · Venc. ' + e.due : '');
+
+  const chk = document.createElement('button');
+  chk.type = 'button';
+  chk.className = 'chk' + (e.validado ? ' on' : '');
+  chk.textContent = e.validado ? '✓ Lançado no sistema' : '○ Marcar como lançado no sistema';
+  chk.addEventListener('click', async () => {
+    chk.disabled = true;
+    try{ await updateDoc(doc(db, 'pagamentos', e.id), { validado: !e.validado }); }
+    catch(err){ chk.disabled = false; setStatus('Não deu pra marcar: ' + err.message, true); }
+  });
+
+  const acts = document.createElement('div');
+  acts.className = 'actions';
+  if(confirmingId === e.id){
+    const q = document.createElement('span');
+    q.textContent = 'Excluir mesmo?';
+    q.style.cssText = 'font-size:12px;color:var(--text-soft);';
+    const yes = document.createElement('button');
+    yes.type = 'button'; yes.className = 'del'; yes.textContent = 'Sim, excluir';
+    yes.addEventListener('click', async () => {
+      yes.disabled = true;
+      try{ await deleteDoc(doc(db, 'pagamentos', e.id)); confirmingId = null; }
+      catch(err){ yes.disabled = false; q.textContent = 'Erro ao excluir: ' + err.message; }
+    });
+    const no = document.createElement('button');
+    no.type = 'button'; no.textContent = 'Não';
+    no.addEventListener('click', () => { confirmingId = null; render(); });
+    acts.appendChild(q); acts.appendChild(yes); acts.appendChild(no);
+  } else {
     const be = document.createElement('button');
     be.type = 'button'; be.textContent = 'Editar';
     be.addEventListener('click', () => { editingId = e.id; render(); });
-    if(confirmingId === e.id){
-      const q = document.createElement('span');
-      q.textContent = 'Excluir mesmo?';
-      q.style.cssText = 'font-size:12px;color:var(--text-soft);';
-      const yes = document.createElement('button');
-      yes.type = 'button'; yes.className = 'del'; yes.textContent = 'Sim, excluir';
-      yes.addEventListener('click', async () => {
-        yes.disabled = true;
-        try{ await db.collection('payments').doc(e.id).delete(); confirmingId = null; }
-        catch(err){ yes.disabled = false; q.textContent = 'Erro ao excluir: ' + err.message; }
-      });
-      const no = document.createElement('button');
-      no.type = 'button'; no.textContent = 'Não';
-      no.addEventListener('click', () => { confirmingId = null; render(); });
-      acts.appendChild(q); acts.appendChild(yes); acts.appendChild(no);
-    } else {
-      const bd = document.createElement('button');
-      bd.type = 'button'; bd.className = 'del'; bd.textContent = 'Excluir';
-      bd.addEventListener('click', () => { confirmingId = e.id; render(); });
-      acts.appendChild(be); acts.appendChild(bd);
+    const bd = document.createElement('button');
+    bd.type = 'button'; bd.className = 'del'; bd.textContent = 'Excluir';
+    bd.addEventListener('click', () => { confirmingId = e.id; render(); });
+    acts.appendChild(be); acts.appendChild(bd);
+  }
+
+  row.appendChild(v); row.appendChild(d); row.appendChild(m); row.appendChild(chk); row.appendChild(acts);
+  return row;
+}
+
+function render(){
+  $('monthLabel').textContent = monthLabel(month);
+  const list = entries.filter(e => entryMonth(e) === month);
+
+  let tIn = 0, tOut = 0;
+  const cnt = { in: 0, out: 0 }, pend = { in: 0, out: 0 };
+  list.forEach(e => {
+    const k = e.tipo === 'out' ? 'out' : 'in';
+    if(k === 'out') tOut += Number(e.valor) || 0; else tIn += Number(e.valor) || 0;
+    cnt[k]++; if(!e.validado) pend[k]++;
+  });
+  $('totalIn').textContent = fmt(tIn);
+  $('totalOut').textContent = fmt(tOut);
+  $('totalNet').textContent = fmt(tIn - tOut);
+  $('cntIn').textContent = cnt.in ? (pend.in ? pend.in + ' a lançar no sistema' : 'tudo lançado ✓') : '';
+  $('cntOut').textContent = cnt.out ? (pend.out ? pend.out + ' a lançar no sistema' : 'tudo lançado ✓') : '';
+
+  const listIn = $('listIn'), listOut = $('listOut');
+  listIn.innerHTML = ''; listOut.innerHTML = '';
+  list.forEach(e => (e.tipo === 'out' ? listOut : listIn).appendChild(buildEntry(e)));
+  [[listIn, 'Nenhum recebimento neste mês.'], [listOut, 'Nenhum pagamento neste mês.']].forEach(([el, msg]) => {
+    if(!el.children.length){
+      const p = document.createElement('div');
+      p.className = 'empty'; p.textContent = msg;
+      el.appendChild(p);
     }
-    row.appendChild(v); row.appendChild(d); row.appendChild(m); row.appendChild(acts);
-    list.appendChild(row);
+  });
+
+  renderHistory();
+}
+
+function renderHistory(){
+  const byMonth = {};
+  entries.forEach(e => {
+    const k = entryMonth(e);
+    const g = byMonth[k] || (byMonth[k] = { in: 0, out: 0 });
+    if(e.tipo === 'out') g.out += Number(e.valor) || 0; else g.in += Number(e.valor) || 0;
+  });
+  [todayKey, month].forEach(k => { if(!byMonth[k]) byMonth[k] = { in: 0, out: 0 }; });
+  const host = $('history');
+  host.innerHTML = '';
+  Object.keys(byMonth).sort().reverse().forEach(k => {
+    const g = byMonth[k];
+    const item = document.createElement('div');
+    item.className = 'hist-item' + (k === month ? ' current' : '');
+    const hm = document.createElement('div');
+    hm.className = 'hm'; hm.textContent = monthLabel(k);
+    const hv = document.createElement('div');
+    hv.className = 'hv';
+    hv.innerHTML = '';
+    const l1 = document.createElement('div'); l1.textContent = 'Recebido ' + fmt(g.in) + ' · Pago ' + fmt(g.out);
+    const l2 = document.createElement('div'); l2.textContent = 'Saldo ';
+    const b = document.createElement('b'); b.textContent = fmt(g.in - g.out);
+    l2.appendChild(b);
+    hv.appendChild(l1); hv.appendChild(l2);
+    item.appendChild(hm); item.appendChild(hv);
+    item.addEventListener('click', () => { month = k; editingId = null; confirmingId = null; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    host.appendChild(item);
   });
 }
+
+setTipo('in');
 render();
 
-(async function(){
-  const statusEl = document.getElementById('status');
-
-  // Verifica se a configuracao foi preenchida
-  if(firebaseConfig.apiKey === "COLE_AQUI"){
-    statusEl.textContent = 'Falta configurar o Firebase (veja o README.md).';
-    return;
-  }
-
+if(String(firebaseConfig.apiKey).startsWith('COLE')){
+  setStatus('Falta colar a configuração do Firebase no arquivo (veja o passo a passo).', true);
+} else {
   try{
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-  }catch(e){
-    statusEl.textContent = 'Erro ao iniciar o Firebase: ' + e.message;
-    return;
+    db = getFirestore(initializeApp(firebaseConfig));
+    onSnapshot(
+      query(collection(db, 'pagamentos'), orderBy('date', 'desc')),
+      snap => {
+        entries = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
+        render();
+      },
+      err => setStatus('Erro ao carregar: ' + err.message, true)
+    );
+  }catch(err){
+    setStatus('Erro ao conectar: ' + err.message, true);
   }
+}
 
-  db.collection('payments').orderBy('date','desc').limit(200).onSnapshot(
-    snap => {
-      entries = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
-      render();
-    },
-    err => { statusEl.textContent = 'Erro ao carregar: ' + err.message; }
-  );
-
-  document.getElementById('form').addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    const valorEl = document.getElementById('valor');
-    const obsEl = document.getElementById('obs');
-    const dueEl = document.getElementById('due');
-    const valor = parseFloat(valorEl.value);
-    if(isNaN(valor) || valor <= 0){ valorEl.focus(); return; }
-    const obs = obsEl.value.trim();
-    if(!obs){ obsEl.focus(); return; }
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.textContent = 'Registrando...';
-    try{
-      await db.collection('payments').add({
-        tipo: tipo,
-        valor: valor,
-        obs: obs,
-        due: tipo === 'out' ? dueEl.value : '',
-        date: new Date().toISOString()
-      });
-      valorEl.value = ''; obsEl.value = ''; dueEl.value = '';
-      statusEl.textContent = 'Registrado ✓';
-      setTimeout(() => { statusEl.textContent = ''; }, 2500);
-    }catch(e){
-      statusEl.textContent = 'Não deu pra salvar: ' + e.message;
-    }
-    btn.disabled = false;
-    btn.textContent = 'Registrar';
-  });
-})();
+$('form').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  if(!db){ setStatus('Sem conexão com o Firebase ainda.', true); return; }
+  const valor = parseFloat($('valor').value);
+  if(isNaN(valor) || valor <= 0){ $('valor').focus(); return; }
+  const obs = $('obs').value.trim();
+  if(!obs){ $('obs').focus(); return; }
+  const btn = $('submitBtn');
+  btn.disabled = true; btn.textContent = 'Registrando...';
+  try{
+    await addDoc(collection(db, 'pagamentos'), {
+      tipo, valor, obs,
+      due: tipo === 'out' ? $('due').value : '',
+      mes: month,
+      validado: false,
+      date: new Date().toISOString()
+    });
+    $('valor').value = ''; $('obs').value = ''; $('due').value = '';
+    setStatus('Registrado ✓');
+    setTimeout(() => setStatus(''), 2500);
+  }catch(err){
+    setStatus('Não deu pra salvar: ' + err.message, true);
+  }
+  btn.disabled = false; btn.textContent = 'Registrar';
+});
 </script>
 </body>
 </html>
